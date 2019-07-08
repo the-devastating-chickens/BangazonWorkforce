@@ -9,7 +9,7 @@ IF NOT EXISTS (
 CREATE DATABASE BangazonWorkforce
 GO
 
-USE BangazonAPI
+USE BangazonWorkforce
 GO
 
 
