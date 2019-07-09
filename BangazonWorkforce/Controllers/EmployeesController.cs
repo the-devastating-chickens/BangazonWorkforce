@@ -77,6 +77,8 @@ namespace BangazonWorkforce.Controllers
             return View();
         }
 
+        ///////////////////////////created by alex -- for the GET i pass in a view model that contain a selectlistitem, i do this so i can create the drop down menu based on departments. i then do the post to insert into sql
+
         // GET: Employees/Create
         public ActionResult Create()
         {
