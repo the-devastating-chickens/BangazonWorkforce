@@ -1,4 +1,11 @@
-﻿using System;
+﻿// Author:  Jonathan
+// The Get  Employees Methods gets all employees as well as the department they are in
+
+
+
+
+
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
