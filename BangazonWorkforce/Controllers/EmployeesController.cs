@@ -1,9 +1,8 @@
-﻿// Author:  Jonathan
-// The Get  Employees Methods gets all employees as well as the department they are in
+﻿/* Authors: Jonathan Schaffer, Billy Mathison
+ * Purpose: Creating a controller for the Employee model. 
+ * Methods: Index, Details, Create, Edit, and Delete. The Get Employees Methods gets all employees as well as the department they are in.
 
-
-
-
+ */
 
 using System;
 using System.Collections.Generic;
@@ -43,7 +42,7 @@ namespace BangazonWorkforce.Controllers
                 {
                     cmd.CommandText = @"SELECT e.Id, e.FirstName, e.LastName, d.[Name]
                                         FROM Employee e 
-                                        JOIN Department d ON e.DepartmentId = d.Id";
+                                        LEFT JOIN Department d ON e.DepartmentId = d.Id";
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -61,10 +60,10 @@ namespace BangazonWorkforce.Controllers
                                 Name = reader.GetString(reader.GetOrdinal("Name"))
                             }
                         };
-                            employees.Add(employee);
+                        employees.Add(employee);
 
                     }
-                        reader.Close();
+                    reader.Close();
 
                     return View(employees);
                 }
@@ -73,7 +72,8 @@ namespace BangazonWorkforce.Controllers
         // GET: Employees/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            Employee employee = GetEmployeeById(id);
+            return View(employee);
         }
 
         // GET: Employees/Create
@@ -142,6 +142,41 @@ namespace BangazonWorkforce.Controllers
             catch
             {
                 return View();
+            }
+        }
+
+        private Employee GetEmployeeById(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT e.Id, e.FirstName, e.LastName, d.[Name]
+                                        FROM Employee e 
+                                        JOIN Department d ON e.DepartmentId = d.Id
+                                        WHERE e.Id = @id";
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    Employee employee = null;
+
+                    if (reader.Read())
+                    {
+                        employee = new Employee
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                            Department = new Department
+                            {
+                                Name = reader.GetString(reader.GetOrdinal("Name"))
+                            }
+                        };
+                    }
+                    reader.Close();
+                    return employee;
+                }
             }
         }
     }
