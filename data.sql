@@ -49,9 +49,10 @@ INSERT INTO Employee (FirstName, LastName, DepartmentId, IsSuperVisor) VALUES ('
 INSERT INTO Employee (FirstName, LastName, DepartmentId, IsSuperVisor) VALUES ('Kristen', 'Norris', 1, 0);
 INSERT INTO Employee (FirstName, LastName, DepartmentId, IsSuperVisor) VALUES ('Madi', 'Peper', 3, 0);
 
-INSERT INTO TrainingProgram ([Name], StartDate, EndDate, MaxAttendees) VALUES('Diversity & Inclusion', 4/25/2019, 6/25/2019, 150);
-INSERT INTO TrainingProgram ([Name], StartDate, EndDate, MaxAttendees) VALUES('Customer Complaint', 12/02/2019, 1/6/2020, 200);
-INSERT INTO TrainingProgram ([Name], StartDate, EndDate, MaxAttendees) VALUES('Safety in the Workplace', 8/02/2019, 9/09/2019, 100);
+INSERT INTO TrainingProgram ([Name], StartDate, EndDate, MaxAttendees) VALUES('Diversity & Inclusion','2019-04-25T14:00:00', '2019-04-25T17:00:00', 150);
+INSERT INTO TrainingProgram ([Name], StartDate, EndDate, MaxAttendees) VALUES('Customer Complaint', '2019-12-02T08:30:00', '2019-12-03T17:00:00', 200);
+INSERT INTO TrainingProgram ([Name], StartDate, EndDate, MaxAttendees) VALUES('Safety in the Workplace', '2019-08-02T08:30:00', '2019-08-05T17:00:00', 100);
+
 
 INSERT INTO ComputerEmployee (EmployeeId, ComputerId, AssignDate, UnassignDate) VALUES (1,2, 12/24/2018, null);
 INSERT INTO ComputerEmployee (EmployeeId, ComputerId, AssignDate, UnassignDate) VALUES (2,3, 9/01/2017, null);
