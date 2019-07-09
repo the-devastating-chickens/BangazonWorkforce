@@ -19,11 +19,12 @@ namespace BangazonWorkforce.Models
         public string LastName { get; set; }
 
         [Required]
+        [Display(Name = "Is SuperVisor?")]
         public bool IsSuperVisor { get; set; }
 
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Select Something")]
-        public int? DepartmentId { get; set; }
+        public int DepartmentId { get; set; }
 
         public List<TrainingProgram> EmployeeTrainingPrograms { get; set; } = new List<TrainingProgram>();
 
