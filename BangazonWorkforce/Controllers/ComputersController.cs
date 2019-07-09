@@ -193,24 +193,17 @@ namespace BangazonWorkforce.Controllers
                                 Make = reader.GetString(reader.GetOrdinal("Make")),
                                 Manufacturer = reader.GetString(reader.GetOrdinal("Manufacturer")),
                                 PurchaseDate = reader.GetDateTime(reader.GetOrdinal("PurchaseDate")),
-                                DecomissionDate = reader.GetDateTime(reader.GetOrdinal("DecomissionDate"))
                             };
 
                         }
+                            reader.Close();
+                            return View(computer);
                     }
-                    catch (SqlNullValueException)
+                    catch 
                     {
-                        computer = new Computer
-                        {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Make = reader.GetString(reader.GetOrdinal("Make")),
-                            Manufacturer = reader.GetString(reader.GetOrdinal("Manufacturer")),
-                            PurchaseDate = reader.GetDateTime(reader.GetOrdinal("PurchaseDate")),
-                        };
+                        return NotFound();
                     }
-                    reader.Close();
-
-                    return View(computer);
+                    
 
                 }
             }
@@ -220,13 +213,27 @@ namespace BangazonWorkforce.Controllers
         // POST: Computers/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(int id, Computer computer)
         {
             try
             {
-                // TODO: Add delete logic here
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
 
-                return RedirectToAction(nameof(Index));
+
+                        cmd.CommandText = @"DELETE FROM Computer 
+                                           WHERE Id = @Id AND Id NOT IN (SELECT ComputerId FROM ComputerEmployee)";
+
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        cmd.ExecuteNonQuery();
+
+                    return RedirectToAction(nameof(Index));
+                    }
+                }
             }
             catch
             {
