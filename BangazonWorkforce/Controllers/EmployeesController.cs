@@ -10,6 +10,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using BangazonWorkforce.Models;
+using BangazonWorkforce.Models.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -76,22 +77,46 @@ namespace BangazonWorkforce.Controllers
             return View(employee);
         }
 
+        ///////////////////////////created by alex -- for the GET i pass in a view model that contain a selectlistitem, i do this so i can create the drop down menu based on departments. i then do the post to insert into sql
+
         // GET: Employees/Create
         public ActionResult Create()
         {
-            return View();
+            EmployeeCreateNewViewModel viewModel = new EmployeeCreateNewViewModel();
+            viewModel.AvailableDepartments = GetDepartments();
+            return View(viewModel);
         }
 
         // POST: Employees/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(EmployeeCreateNewViewModel viewModel)
         {
+            Employee employee = viewModel.Employee;
             try
             {
                 // TODO: Add insert logic here
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"INSERT INTO Employee (FirstName,LastName, IsSuperVisor, DepartmentId) VALUES (@FirstName, @LastName, @IsSuperVisor, @DepartmentId)";                      
 
-                return RedirectToAction(nameof(Index));
+                        cmd.Parameters.Add(new SqlParameter("@FirstName", employee.FirstName));
+                        cmd.Parameters.Add(new SqlParameter("@LastName", employee.LastName));
+                        cmd.Parameters.Add(new SqlParameter("@IsSuperVisor", employee.IsSuperVisor));
+                        cmd.Parameters.Add(new SqlParameter("@DepartmentId", employee.DepartmentId));
+
+                        cmd.ExecuteNonQuery();
+
+                        return RedirectToAction(nameof(Index));
+
+
+                    }
+                }
+
+
             }
             catch
             {
@@ -145,13 +170,18 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
+<<<<<<< HEAD
         private Employee GetEmployeeById(int id)
+=======
+        private List<Department> GetDepartments ()
+>>>>>>> master
         {
             using (SqlConnection conn = Connection)
             {
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
+<<<<<<< HEAD
                     cmd.CommandText = @"SELECT e.Id, e.FirstName, e.LastName, d.[Name]
                                         FROM Employee e 
                                         JOIN Department d ON e.DepartmentId = d.Id
@@ -176,6 +206,26 @@ namespace BangazonWorkforce.Controllers
                     }
                     reader.Close();
                     return employee;
+=======
+                    cmd.CommandText = @"Select Id, Name FROM Department";
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    List<Department> departments = new List<Department>();
+
+                    while (reader.Read())
+                    {
+                        Department department = new Department()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.GetString(reader.GetOrdinal("Name"))
+                        };
+                        departments.Add(department);
+
+                    }
+                    reader.Close();
+                    return departments;
+>>>>>>> master
                 }
             }
         }
