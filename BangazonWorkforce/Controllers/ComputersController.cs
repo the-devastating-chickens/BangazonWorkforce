@@ -1,4 +1,11 @@
-﻿using System;
+﻿// Author: Jonathan Schaffer 
+// The Get Method returns a list of all the computers
+// The Details Method get more specific information of a single computer using a try and catch if the decomissionDate is null
+// The create method creates a new computer with the make manufacturer and the dat purchased
+// The Delete method deletes from database as long as the computer has not been assigned
+
+
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
