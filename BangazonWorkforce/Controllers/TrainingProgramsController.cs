@@ -45,7 +45,8 @@ namespace BangazonWorkforce.Controllers
                                         t.StartDate,
                                         t.EndDate,
                                         t.MaxAttendees
-                                        FROM TrainingProgram t";
+                                        FROM TrainingProgram t
+                                        WHERE t.EndDate > CURRENT_TIMESTAMP";
                     SqlDataReader reader = cmd.ExecuteReader();
                     List<TrainingProgram> trainingPrograms = new List<TrainingProgram>();
 
