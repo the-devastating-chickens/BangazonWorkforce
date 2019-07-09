@@ -27,6 +27,9 @@ namespace BangazonWorkforce.Controllers
                 return new SqlConnection(_config.GetConnectionString("DefaultConnection"));
             }
         }
+
+        //////////////////////////////////////////CREATED BY ALEX -- will display departments with Name, Budget, and number of employees. had to use group by in sql query to perform a count on employees. had to add d.Budget to make it an aggregate function so i can include it inside the select statement. 
+
         // GET: Departments
         public ActionResult Index()
         {
