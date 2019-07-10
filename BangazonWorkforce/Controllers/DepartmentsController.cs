@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Author: Alex Thacker, Jonathan Schaffer 
+
+
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -49,8 +52,8 @@ namespace BangazonWorkforce.Controllers
                                         d.Name, 
                                         d.Budget 
                                         FROM Department d 
-                                        JOIN Employee e ON e.DepartmentId = d.Id
-                                        GROUP by d.Name, d.Budget, d.Id";
+                                        LEFT JOIN Employee e ON e.DepartmentId = d.Id
+                                        GROUP by d.Name, d.Budget , d.Id";
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -154,17 +157,31 @@ namespace BangazonWorkforce.Controllers
         {
             return View();
         }
+        /////////////////////// Authur Jonathan Schaffer This method allows user to Create a new Department
 
         // POST: Departments/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(Department department)
         {
             try
             {
-                // TODO: Add insert logic here
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"INSERT INTO Department (Name, Budget)
+                                                    VALUES (@Name, @Budget)";
 
-                return RedirectToAction(nameof(Index));
+                        cmd.Parameters.Add(new SqlParameter("@Name", department.Name));
+                        cmd.Parameters.Add(new SqlParameter("@Budget", department.Budget));
+
+                         await cmd.ExecuteNonQueryAsync();
+
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
             }
             catch
             {

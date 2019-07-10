@@ -25,11 +25,7 @@ namespace BangazonWorkforce.Models
         [Required]
         [Range(1, int.MaxValue, ErrorMessage = "Select Something")]
         public int DepartmentId { get; set; }
-
-        public List<TrainingProgram> EmployeeTrainingPrograms { get; set; } = new List<TrainingProgram>();
-
-        public List<Computer> Computers { get; set; } = new List<Computer>();
-
+        
         public Department Department { get; set; }
 
         public string Name { get
