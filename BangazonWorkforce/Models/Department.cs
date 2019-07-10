@@ -18,6 +18,7 @@ namespace BangazonWorkforce.Models
         public int Budget { get; set; }
         [Display(Name = "Number of Employees")]
         public int NumberOfEmployees { get; set;  }
-        public List<Employee> DepartmentEmployees { get; set; } = new List<Employee>();
+        [Display(Name = "Employees:")]
+        public List<Employee> DepartmentEmployees { get; set; }
     }
 }

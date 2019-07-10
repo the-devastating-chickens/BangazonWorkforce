@@ -48,11 +48,12 @@ namespace BangazonWorkforce.Controllers
 
                     cmd.CommandText = @"SELECT 
                                         COUNT(e.FirstName) as NumberOfEmployees, 
+                                        d.Id,
                                         d.Name, 
                                         d.Budget 
                                         FROM Department d 
                                         LEFT JOIN Employee e ON e.DepartmentId = d.Id
-                                        GROUP by d.Name, d.Budget";
+                                        GROUP by d.Name, d.Budget , d.Id";
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -62,7 +63,7 @@ namespace BangazonWorkforce.Controllers
                     {
                         Department department = new Department()
                         {
-                            
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             Name = reader.GetString(reader.GetOrdinal("Name")),
                             Budget = reader.GetInt32(reader.GetOrdinal("Budget")),
                             NumberOfEmployees = reader.GetInt32(reader.GetOrdinal("NumberOfEmployees"))
@@ -76,10 +77,79 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
+        private Department GetDepartmentById(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"Select
+                    d.Id,
+                    d.Name,
+                    d.Budget
+                    FROM Department d
+                    WHERE d.Id = @Id";
+
+                    cmd.Parameters.Add(new SqlParameter("@Id", id));
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    Department department = null;
+                    if (reader.Read())
+                    {
+                        department = new Department
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                            Budget = reader.GetInt32(reader.GetOrdinal("Budget"))
+                        };
+                    }
+                    reader.Close();
+
+                    return department;
+                }
+            }
+        }
+
+        private List<Employee> GetMatchingEmployees(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"Select Id, FirstName,
+               LastName,
+               DepartmentId
+               FROM Employee
+               WHERE DepartmentId = @Id;
+             ";
+                    cmd.Parameters.Add(new SqlParameter("@Id", id));
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    List<Employee> employeeList = new List<Employee>();
+                    while (reader.Read())
+                    {
+                        Employee employee = new Employee
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                            DepartmentId = reader.GetInt32(reader.GetOrdinal("DepartmentId"))
+                        };
+                        employeeList.Add(employee);
+                    }
+                    reader.Close();
+                    return employeeList;
+                }
+            }
+        }
+
         // GET: Departments/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            Department department = GetDepartmentById(id);
+            department.DepartmentEmployees = GetMatchingEmployees(id);
+            return View(department);
         }
 
         // GET: Departments/Create
