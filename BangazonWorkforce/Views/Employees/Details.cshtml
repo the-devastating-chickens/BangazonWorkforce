@@ -1,0 +1,67 @@
+﻿@* Author: Billy Mathison
+ * Purpose: Creating a details template for an employee using EmployeeDetailsViewModel, including employee first and last name, department name, assigned computer manufacturer and make, and a list of training programs.
+ * Methods: None
+ *@
+
+@model BangazonWorkforce.Models.ViewModels.EmployeeDetailsViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+    <h4>Employee</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Employee.FirstName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Employee.FirstName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Employee.LastName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Employee.LastName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Employee.Department)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Employee.Department.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.AssignedComputer)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.AssignedComputer.Manufacturer) @Html.DisplayFor(model => model.AssignedComputer.Make)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.ComputerEmployee.AssignDate)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.ComputerEmployee.AssignDate)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.TrainingPrograms)
+        </dt>
+
+        @foreach (var TrainingProgram in Model.TrainingPrograms)
+        {
+            <dd class="col-sm-10">
+                @Html.DisplayFor(modelItem => TrainingProgram.Name)
+            </dd>
+            <dt class="col-sm-2">
+            </dt>
+        }
+
+    </dl>
+        @Html.ActionLink("Assign New Training Program", "TrainingProgramForm", new { id = Model.Employee.Id })
+</div>
+<div>
+    @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
+    <a asp-action="Index">Back to List</a>
+</div>
