@@ -1,4 +1,4 @@
-﻿@model BangazonWorkforce.Models.Employee
+﻿@model BangazonWorkforce.Models.Department
 
 @{
     ViewData["Title"] = "Details";
@@ -7,40 +7,22 @@
 <h1>Details</h1>
 
 <div>
-    <h4>Employee</h4>
+    <h4>Department</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Id)
+        <dd class="col-sm-10">
+            <h5>@Html.DisplayFor(model => model.Name)</h5>
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FirstName)
+        <dt class="col-sm-10">
+            @Html.DisplayNameFor(model => model.DepartmentEmployees)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.IsSuperVisor)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.IsSuperVisor)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.DepartmentId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.DepartmentId)
-        </dd>
-    </dl>
+            @foreach (var item in Model.DepartmentEmployees)
+            {
+            <dd class="col-sm-10">
+                @Html.DisplayFor(ModelItem => item.Name)
+                </dd>
+             }
+        </dl>
 </div>
 <div>
     @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |

@@ -45,11 +45,12 @@ namespace BangazonWorkforce.Controllers
 
                     cmd.CommandText = @"SELECT 
                                         COUNT(e.FirstName) as NumberOfEmployees, 
+                                        d.Id,
                                         d.Name, 
                                         d.Budget 
                                         FROM Department d 
                                         JOIN Employee e ON e.DepartmentId = d.Id
-                                        GROUP by d.Name, d.Budget";
+                                        GROUP by d.Name, d.Budget, d.Id";
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -59,6 +60,7 @@ namespace BangazonWorkforce.Controllers
                     {
                         Department department = new Department()
                         {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             Name = reader.GetString(reader.GetOrdinal("Name")),
                             Budget = reader.GetInt32(reader.GetOrdinal("Budget")),
                             NumberOfEmployees = reader.GetInt32(reader.GetOrdinal("NumberOfEmployees"))
@@ -80,10 +82,11 @@ namespace BangazonWorkforce.Controllers
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"Select
+                    d.Id,
                     d.Name,
                     d.Budget
                     FROM Department d
-                    WHERE Id = @Id";
+                    WHERE d.Id = @Id";
 
                     cmd.Parameters.Add(new SqlParameter("@Id", id));
                     SqlDataReader reader = cmd.ExecuteReader();

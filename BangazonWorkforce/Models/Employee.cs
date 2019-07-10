@@ -29,5 +29,10 @@ namespace BangazonWorkforce.Models
         public List<Computer> Computers { get; set; } = new List<Computer>();
 
         public Department Department { get; set; }
+
+        public string Name { get
+            {
+                return $"{FirstName} {LastName}";
+            } }
     }
 }
