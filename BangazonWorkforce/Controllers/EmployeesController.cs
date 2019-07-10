@@ -163,14 +163,29 @@ namespace BangazonWorkforce.Controllers
                         cmd.ExecuteNonQuery();
                         cmd.Parameters.Clear();
 
+<<<<<<< HEAD
                         cmd.CommandText = "DELETE from ComputerEmployee WHERE EmployeeId = @id";
 
+=======
+                        cmd.CommandText = @"UPDATE ComputerEmployee SET EmployeeId = @EmployeeId, 
+                                                ComputerId = @ComputerId,
+                                                UnassignDate = @UnassignDate
+                                                WHERE Id = @id";
+
+                        cmd.Parameters.Add(new SqlParameter("@EmployeeId", EmployeeId));
+                        cmd.Parameters.Add(new SqlParameter("@ComputerId", ComputerId));
+                        cmd.Parameters.Add(new SqlParameter("@UnassignDate", UnassignDate));
+>>>>>>> at-ticket2
                         cmd.Parameters.Add(new SqlParameter("@id", id));
 
                         cmd.ExecuteNonQuery();
                         cmd.Parameters.Clear();
 
+<<<<<<< HEAD
                         cmd.CommandText = "INSERT INTO ComputerEmployee "
+=======
+                        cmd.CommandText = "INSERT INTO ComputerEmployee (EmployeeId, ComputerId, AssignDate, "
+>>>>>>> at-ticket2
                     }
                 }
                 return RedirectToAction(nameof(Index));
