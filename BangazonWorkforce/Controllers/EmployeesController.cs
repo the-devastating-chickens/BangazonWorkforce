@@ -144,6 +144,7 @@ namespace BangazonWorkforce.Controllers
         public ActionResult Edit(int id, EmployeeEditViewModel viewModel)
         {
             Employee employee = viewModel.Employee;
+            viewModel.Computer = GetCurrentComputer(id);
             try
             {
                 // TODO: Add update logic here
@@ -166,12 +167,12 @@ namespace BangazonWorkforce.Controllers
                         
                         cmd.CommandText = @"UPDATE ComputerEmployee SET 
                                                 EmployeeId = @EmployeeId, 
-                                                
+                                                ComputerId = @ComputerId,
                                                 UnassignDate = @UnassignDate
                                                 WHERE EmployeeId = @id";
 
                         cmd.Parameters.Add(new SqlParameter("@EmployeeId", id));
-                        //cmd.Parameters.Add(new SqlParameter("@ComputerId", viewModel.CurrentComputerId));
+                        cmd.Parameters.Add(new SqlParameter("@ComputerId", viewModel.Computer.Id));
                         cmd.Parameters.Add(new SqlParameter("@UnassignDate", DateTime.Now.ToString()));
                         cmd.Parameters.Add(new SqlParameter("@id", id));
 
@@ -279,7 +280,7 @@ namespace BangazonWorkforce.Controllers
                                         c.Make, 
                                         c.Manufacturer from Computer c
                                         left JOIN ComputerEmployee ce on ce.ComputerId = c.Id
-                                        where ce.UnassignDate is not null and c.DecomissionDate is null";
+                                        where ce.ComputerId is null or ce.UnassignDate is not null and c.DecomissionDate is null";
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
