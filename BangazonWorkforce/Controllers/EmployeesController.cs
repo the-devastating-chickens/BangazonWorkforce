@@ -166,12 +166,12 @@ namespace BangazonWorkforce.Controllers
                         
                         cmd.CommandText = @"UPDATE ComputerEmployee SET 
                                                 EmployeeId = @EmployeeId, 
-                                                ComputerId = @ComputerId,
+                                                
                                                 UnassignDate = @UnassignDate
-                                                WHERE Id = @id";
+                                                WHERE EmployeeId = @id";
 
                         cmd.Parameters.Add(new SqlParameter("@EmployeeId", id));
-                        cmd.Parameters.Add(new SqlParameter("@ComputerId", viewModel.CurrentComputerId));
+                        //cmd.Parameters.Add(new SqlParameter("@ComputerId", viewModel.CurrentComputerId));
                         cmd.Parameters.Add(new SqlParameter("@UnassignDate", DateTime.Now.ToString()));
                         cmd.Parameters.Add(new SqlParameter("@id", id));
 
@@ -279,7 +279,7 @@ namespace BangazonWorkforce.Controllers
                                         c.Make, 
                                         c.Manufacturer from Computer c
                                         left JOIN ComputerEmployee ce on ce.ComputerId = c.Id
-                                        where ce.ComputerId is null and c.DecomissionDate is null";
+                                        where ce.UnassignDate is not null and c.DecomissionDate is null";
 
                     SqlDataReader reader = cmd.ExecuteReader();
 
@@ -315,7 +315,7 @@ namespace BangazonWorkforce.Controllers
                                             FROM Employee e 
                                             JOIN ComputerEmployee ce on e.Id = ce.EmployeeId
                                             join Computer c on c.Id = ce.ComputerId
-                                            WHERE e.Id = @id";
+                                            WHERE e.Id = @id and ce.UnassignDate is null";
 
                     cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = cmd.ExecuteReader();
