@@ -1,8 +1,7 @@
 ﻿/* Authors: Jonathan Schaffer, Billy Mathison
  * Purpose: Creating a controller for the Employee model. 
- * Methods: Index, Details, Create, Edit, and Delete. The Get Employees Methods gets all employees as well as the department they are in.
-
- */
+ * Methods: Index, Details, Create, Edit, Delete, and GetEmployeeById. The Get Employees Methods gets all employees as well as the department they are in.
+  */
 
 using System;
 using System.Collections.Generic;
