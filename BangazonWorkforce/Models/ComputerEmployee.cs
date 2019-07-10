@@ -7,8 +7,8 @@ namespace BangazonWorkforce.Models
 {
     public class ComputerEmployee
     {
-        public DateTime AssignDate { get; set; }
+        public DateTime? AssignDate { get; set; }
 
-        public DateTime UnassignDate { get; set; }
+        public DateTime? UnassignDate { get; set; }
     }
 }

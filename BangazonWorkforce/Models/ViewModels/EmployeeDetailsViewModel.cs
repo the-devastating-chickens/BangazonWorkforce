@@ -9,6 +9,7 @@ namespace BangazonWorkforce.Models.ViewModels
     {
         public Employee Employee { get; set; }
         public Computer AssignedComputer { get; set; }
-        public List<TrainingProgram> TrainingPrograms { get; set; }
+        public List<TrainingProgram> TrainingPrograms { get; set; } = new List<TrainingProgram>();
+        public ComputerEmployee ComputerEmployee { get; set; }
     }
 }

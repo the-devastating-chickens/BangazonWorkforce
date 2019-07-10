@@ -73,7 +73,7 @@ namespace BangazonWorkforce.Controllers
         // GET: Employees/Details/5
         public ActionResult Details(int id)
         {
-            Employee employee = GetEmployeeById(id);
+            EmployeeDetailsViewModel employee = GetEmployeeById(id);
             return View(employee);
         }
 
@@ -157,17 +157,13 @@ namespace BangazonWorkforce.Controllers
                                         e.FirstName, 
                                         e.LastName, 
                                         d.[Name] AS DepartmentName, 
-                                        d.Id AS DepartmentId, 
                                         c.Id AS ComputerId, 
                                         c.Make, 
-                                        c.Manufacturer, 
+                                        c.Manufacturer,
+                                        ce.Id AS ComputerEmployeeId,
                                         ce.AssignDate, 
-                                        ce.UnassignDate, 
                                         tp.Id AS TrainingProgramId, 
-                                        tp.Name AS TrainingProgramName, 
-                                        tp.StartDate, 
-                                        tp.EndDate, 
-                                        tp.MaxAttendees
+                                        tp.Name AS TrainingProgramName
                                         FROM Employee e 
                                         LEFT JOIN Department d ON e.DepartmentId = d.Id
                                         LEFT JOIN ComputerEmployee ce ON ce.EmployeeId = e.id 
@@ -180,31 +176,51 @@ namespace BangazonWorkforce.Controllers
 
                     EmployeeDetailsViewModel model = null;
 
-                    if (reader.Read())
+                    while (reader.Read())
                     {
-                        model.Employee = new Employee
+                        if (model == null)
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
-                            Department = new Department
+                            model = new EmployeeDetailsViewModel();
+                            model.Employee = new Employee
                             {
-                                Name = reader.GetString(reader.GetOrdinal("DepartmentName"))
-                            }
-                        };
+                                Id = reader.GetInt32(reader.GetOrdinal("EmployeeId")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                Department = new Department
+                                {
+                                    Name = reader.GetString(reader.GetOrdinal("DepartmentName"))
+                                }
+                            };
+                        }
 
-                        if ((reader.GetInt32(reader.GetOrdinal("ComputerId")) != 0))
+                        if (!reader.IsDBNull(reader.GetOrdinal("ComputerId")))
                         {
                             model.AssignedComputer = new Computer
                             {
                                 Id = reader.GetInt32(reader.GetOrdinal("ComputerId")),
                                 Make = reader.GetString(reader.GetOrdinal("Make")),
-                                Manufacturer = reader.GetString(reader.GetOrdinal("Manufacturer")),
-                                AssignDate = reader.GetDateTime(reader.GetOrdinal("AssignDate")),
-                                UnassignDate = reader.GetDateTime(reader.GetOrdinal("UnassignDate"))
-                            }
+                                Manufacturer = reader.GetString(reader.GetOrdinal("Manufacturer"))
+                            };
                         }
 
+                        if (!reader.IsDBNull(reader.GetOrdinal("ComputerEmployeeId")))
+                        {
+                            model.ComputerEmployee = new ComputerEmployee
+                            {
+                                AssignDate = reader.GetDateTime(reader.GetOrdinal("AssignDate"))
+                            };
+                        }
+
+                        if (!reader.IsDBNull(reader.GetOrdinal("TrainingProgramId")))
+                        {
+                            TrainingProgram trainingProgram = new TrainingProgram
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("TrainingProgramId")),
+                                Name = reader.GetString(reader.GetOrdinal("TrainingProgramName"))
+                            };
+
+                            model.TrainingPrograms.Add(trainingProgram);
+                        }
                     }
                     reader.Close();
                     return model;
