@@ -286,16 +286,23 @@ namespace BangazonWorkforce.Controllers
 
                     List<Computer> computers = new List<Computer>();
 
+                    var dictionary = new Dictionary<int, Computer>();
+
                     while (reader.Read())
                     {
-                        Computer computer = new Computer()
+                        if (!dictionary.ContainsKey(reader.GetInt32(reader.GetOrdinal("Id"))))
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Make = reader.GetString(reader.GetOrdinal("Make"))
-                        };
-                        computers.Add(computer);
+                            Computer computer = new Computer()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                Make = reader.GetString(reader.GetOrdinal("Make"))
+                            };
+                            dictionary.Add(computer.Id, computer);
+                            computers.Add(dictionary[reader.GetInt32(reader.GetOrdinal("Id"))]);
+                        }
 
                     }
+
                     reader.Close();
                     return computers;
                 }
