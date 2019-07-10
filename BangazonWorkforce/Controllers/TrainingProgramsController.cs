@@ -71,7 +71,8 @@ namespace BangazonWorkforce.Controllers
         // GET: TrainingProgram/Details/5
         public ActionResult Details(int id)
         {
-            return View();
+            TrainingProgram trainingProgram = GetTrainingProgramById(id);
+            return View(trainingProgram);
         }
 
         // GET: TrainingProgram/Create
@@ -190,13 +191,16 @@ namespace BangazonWorkforce.Controllers
                             };
                         }
 
-                        Employee employee = new Employee
+                        if (!reader.IsDBNull(reader.GetOrdinal("FirstName")))
                         {
-                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
-                            LastName = reader.GetString(reader.GetOrdinal("LastName"))
-                        };
+                            Employee employee = new Employee
+                            {
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName"))
+                            };
 
-                        trainingProgram.EmployeesInTrainingProgram.Add(employee);
+                            trainingProgram.EmployeesInTrainingProgram.Add(employee);
+                        }
                     }
                     reader.Close();
                     return trainingProgram;
