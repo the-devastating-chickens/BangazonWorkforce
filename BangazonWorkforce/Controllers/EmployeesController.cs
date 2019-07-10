@@ -127,18 +127,52 @@ namespace BangazonWorkforce.Controllers
         // GET: Employees/Edit/5
         public ActionResult Edit(int id)
         {
-            return View();
+            EmployeeEditViewModel viewModel = new EmployeeEditViewModel();
+
+            viewModel.AvailableComputers = GetComputers();
+            viewModel.AvailableDepartments = GetDepartments();
+            //viewModel.CurrentComputerId = GetComputerId(id);
+            viewModel.Computer = GetCurrentComputer(id);
+            viewModel.Employee = GetEmployee(id);
+
+            return View(viewModel);
         }
 
-        // POST: Employees/Edit/5
+        //POST: Employees/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, EmployeeEditViewModel viewModel)
         {
+            Employee employee = viewModel.Employee;
             try
             {
                 // TODO: Add update logic here
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"UPDATE Employee SET LastName = @LastName, 
+                                            DepartmentId = @DepartmentId
+                                            WHERE Id = @id";
 
+                        cmd.Parameters.Add(new SqlParameter("@LastName", employee.LastName));
+                        cmd.Parameters.Add(new SqlParameter("@DepartmentId", employee.DepartmentId));
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        cmd.ExecuteNonQuery();
+                        cmd.Parameters.Clear();
+
+                        cmd.CommandText = "DELETE from ComputerEmployee WHERE EmployeeId = @id";
+
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        cmd.ExecuteNonQuery();
+                        cmd.Parameters.Clear();
+
+                        cmd.CommandText = "INSERT INTO ComputerEmployee "
+                    }
+                }
                 return RedirectToAction(nameof(Index));
             }
             catch
@@ -195,6 +229,128 @@ namespace BangazonWorkforce.Controllers
                     }
                     reader.Close();
                     return departments;
+                }
+            }
+        }
+
+        private List<Computer> GetComputers ()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    //cmd.CommandText = @"Select Id, Make FROM Computer";
+
+                    //SqlDataReader reader = cmd.ExecuteReader();
+
+                    //List<Computer> computers = new List<Computer>();
+
+                    //while (reader.Read())
+                    //{
+                    //    Computer computer = new Computer()
+                    //    {
+                    //        Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                    //        Make = reader.GetString(reader.GetOrdinal("Make"))
+                    //    };
+                    //    computers.Add(computer);
+
+                    //}
+                    //reader.Close();
+                    //return computers;
+
+                    cmd.CommandText = @"select c.Id, 
+                                        c.Make, 
+                                        c.Manufacturer from Computer c
+                                        left JOIN ComputerEmployee ce on ce.ComputerId = c.Id
+                                        where ce.ComputerId is null and c.DecomissionDate is null";
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    List<Computer> computers = new List<Computer>();
+
+                    while (reader.Read())
+                    {
+                        Computer computer = new Computer()
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Make = reader.GetString(reader.GetOrdinal("Make"))
+                        };
+                        computers.Add(computer);
+
+                    }
+                    reader.Close();
+                    return computers;
+                }
+            }
+        }
+
+        private Computer GetCurrentComputer (int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"select e.Id, 
+                                            e.FirstName, 
+                                            c.Id as computerId,
+                                            c.Make
+                                            FROM Employee e 
+                                            JOIN ComputerEmployee ce on e.Id = ce.EmployeeId
+                                            join Computer c on c.Id = ce.ComputerId
+                                            WHERE e.Id = @id";
+
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    Computer computer = null;
+
+                    if (reader.Read())
+                    {
+                        computer = new Computer()
+                        {
+                            Make = reader.GetString(reader.GetOrdinal("Make"))
+                        };
+                        
+                    }
+
+                    reader.Close();
+
+                   
+                    return computer;
+
+                }
+            }
+        }
+
+        private Employee GetEmployee (int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"select FirstName, LastName, DepartmentId from Employee where Id = @id";
+
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    Employee employee = null;
+
+                    if (reader.Read())
+                    {
+                        employee = new Employee()
+                        {
+                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                            DepartmentId = reader.GetInt32(reader.GetOrdinal("DepartmentId"))
+                        };
+                    }
+
+                    return employee;
+
+
                 }
             }
         }
