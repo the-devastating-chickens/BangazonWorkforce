@@ -139,30 +139,53 @@ namespace BangazonWorkforce.Controllers
         }
 
         //POST: Employees/Edit/5
-//        [HttpPost]
-//        [ValidateAntiForgeryToken]
-//        public ActionResult Edit(int id, EmployeeEditViewModel viewModel)
-//        {
-//            Employee employee = viewModel.Employee;
-//            try
-//            {
-//                // TODO: Add update logic here
-//                using (SqlConnection conn = Connection)
-//                {
-//                    conn.Open();
-//                    using (SqlCommand cmd = conn.CreateCommand())
-//                    {
-//                        cmd.CommandText = @"UPDATE Employee SET LastName = @LastName,
-//"
-//                    }
-//                }
-//                return RedirectToAction(nameof(Index));
-//            }
-//            catch
-//            {
-//                return View();
-//            }
-//        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, EmployeeEditViewModel viewModel)
+        {
+            Employee employee = viewModel.Employee;
+            try
+            {
+                // TODO: Add update logic here
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"UPDATE Employee SET LastName = @LastName, 
+                                            DepartmentId = @DepartmentId
+                                            WHERE Id = @id";
+
+                        cmd.Parameters.Add(new SqlParameter("@LastName", employee.LastName));
+                        cmd.Parameters.Add(new SqlParameter("@DepartmentId", employee.DepartmentId));
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        cmd.ExecuteNonQuery();
+                        cmd.Parameters.Clear();
+
+                        cmd.CommandText = @"UPDATE ComputerEmployee SET EmployeeId = @EmployeeId, 
+                                                ComputerId = @ComputerId,
+                                                UnassignDate = @UnassignDate
+                                                WHERE Id = @id";
+
+                        cmd.Parameters.Add(new SqlParameter("@EmployeeId", EmployeeId));
+                        cmd.Parameters.Add(new SqlParameter("@ComputerId", ComputerId));
+                        cmd.Parameters.Add(new SqlParameter("@UnassignDate", UnassignDate));
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        cmd.ExecuteNonQuery();
+                        cmd.Parameters.Clear();
+
+                        cmd.CommandText = "INSERT INTO ComputerEmployee (EmployeeId, ComputerId, AssignDate, "
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
 
         // GET: Employees/Delete/5
         public ActionResult Delete(int id)
