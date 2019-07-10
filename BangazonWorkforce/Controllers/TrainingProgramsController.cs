@@ -158,5 +158,50 @@ namespace BangazonWorkforce.Controllers
                 return View();
             }
         }
+
+        private TrainingProgram GetTrainingProgramById(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT tp.Id AS TrainingProgramId, tp.Name, tp.StartDate, tp.EndDate, tp.MaxAttendees, e.FirstName, e.LastName 
+                                        FROM TrainingProgram tp 
+                                        LEFT JOIN EmployeeTraining et on et.TrainingProgramId = tp.Id
+                                        LEFT JOIN Employee e on e.Id = et.EmployeeId
+                                        WHERE tp.Id = @id";
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    TrainingProgram trainingProgram = null;
+
+                    while (reader.Read())
+                    {
+                        if (trainingProgram == null)
+                        {
+                            trainingProgram = new TrainingProgram
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("TrainingProgramId")),
+                                Name = reader.GetString(reader.GetOrdinal("Name")),
+                                StartDate = reader.GetDateTime(reader.GetOrdinal("StartDate")),
+                                EndDate = reader.GetDateTime(reader.GetOrdinal("EndDate")),
+                                MaxAttendees = reader.GetInt32(reader.GetOrdinal("MaxAttendees")),
+                            };
+                        }
+
+                        Employee employee = new Employee
+                        {
+                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                            LastName = reader.GetString(reader.GetOrdinal("LastName"))
+                        };
+
+                        trainingProgram.EmployeesInTrainingProgram.Add(employee);
+                    }
+                    reader.Close();
+                    return trainingProgram;
+                }
+            }
+        }
     }
 }
