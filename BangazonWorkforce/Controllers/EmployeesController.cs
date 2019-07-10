@@ -163,32 +163,33 @@ namespace BangazonWorkforce.Controllers
                         cmd.ExecuteNonQuery();
                         cmd.Parameters.Clear();
 
-<<<<<<< HEAD
-                        cmd.CommandText = "DELETE from ComputerEmployee WHERE EmployeeId = @id";
-
-=======
-                        cmd.CommandText = @"UPDATE ComputerEmployee SET EmployeeId = @EmployeeId, 
+                        
+                        cmd.CommandText = @"UPDATE ComputerEmployee SET 
+                                                EmployeeId = @EmployeeId, 
                                                 ComputerId = @ComputerId,
                                                 UnassignDate = @UnassignDate
                                                 WHERE Id = @id";
 
-                        cmd.Parameters.Add(new SqlParameter("@EmployeeId", EmployeeId));
-                        cmd.Parameters.Add(new SqlParameter("@ComputerId", ComputerId));
-                        cmd.Parameters.Add(new SqlParameter("@UnassignDate", UnassignDate));
->>>>>>> at-ticket2
+                        cmd.Parameters.Add(new SqlParameter("@EmployeeId", id));
+                        cmd.Parameters.Add(new SqlParameter("@ComputerId", viewModel.CurrentComputerId));
+                        cmd.Parameters.Add(new SqlParameter("@UnassignDate", DateTime.Now.ToString()));
                         cmd.Parameters.Add(new SqlParameter("@id", id));
 
                         cmd.ExecuteNonQuery();
                         cmd.Parameters.Clear();
 
-<<<<<<< HEAD
-                        cmd.CommandText = "INSERT INTO ComputerEmployee "
-=======
-                        cmd.CommandText = "INSERT INTO ComputerEmployee (EmployeeId, ComputerId, AssignDate, "
->>>>>>> at-ticket2
+                        
+                        cmd.CommandText = "INSERT INTO ComputerEmployee (EmployeeId, ComputerId, AssignDate) VALUES (@EmployeeId, @ComputerId, @AssignDate)";
+
+                        cmd.Parameters.Add(new SqlParameter("@EmployeeId", id));
+                        cmd.Parameters.Add(new SqlParameter("@ComputerId", viewModel.CurrentComputerId));
+                        cmd.Parameters.Add(new SqlParameter("@AssignDate", DateTime.Now.ToString()));
+
+                        cmd.ExecuteNonQuery();
+
                     }
+                        return RedirectToAction(nameof(Index));
                 }
-                return RedirectToAction(nameof(Index));
             }
             catch
             {
@@ -325,7 +326,9 @@ namespace BangazonWorkforce.Controllers
                     {
                         computer = new Computer()
                         {
+                            Id = reader.GetInt32(reader.GetOrdinal("computerId")),
                             Make = reader.GetString(reader.GetOrdinal("Make"))
+
                         };
                         
                     }
