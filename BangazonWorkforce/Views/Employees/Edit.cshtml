@@ -6,7 +6,7 @@
 
 <h1>Edit</h1>
 
-<h4>EmployeeEditViewModel</h4>
+<h4>@Model.Employee.FirstName @Model.Employee.LastName</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -23,9 +23,12 @@
                 <select asp-for="Employee.DepartmentId" asp-items="@Model.AvailableDepartmentsSelectList"></select>
                 <span asp-validation-for="Employee.DepartmentId" class="text-danger"></span>
             </div>
-
-            <div class="form-group">
+            <div>
                 <label class="control-label">Current Computer</label>
+                <h1 asp-for="Computer.Make">@Model.Computer.Make</h1>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Assign New Computer</label>
                 <select asp-for="CurrentComputerId" asp-items="@Model.AvailableComputersSelectList"></select>
                 <span asp-validation-for="CurrentComputerId" class="text-danger"></span>
             </div>
