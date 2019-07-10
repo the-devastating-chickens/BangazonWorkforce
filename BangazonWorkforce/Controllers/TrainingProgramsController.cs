@@ -118,7 +118,15 @@ namespace BangazonWorkforce.Controllers
         public ActionResult Edit(int id)
         {
             TrainingProgram trainingProgram = GetTrainingProgramById(id);
-            return View(trainingProgram);
+            if (trainingProgram.EndDate > DateTime.Now)
+            {
+                return View(trainingProgram);
+            }
+            else
+            {
+                return StatusCode(403);
+            }
+
         }
 
         // POST: TrainingProgram/Edit/5
