@@ -160,7 +160,8 @@ namespace BangazonWorkforce.Controllers
                                         c.Make, 
                                         c.Manufacturer,
                                         ce.Id AS ComputerEmployeeId,
-                                        ce.AssignDate, 
+                                        ce.AssignDate,
+                                        ce.UnassignDate,
                                         tp.Id AS TrainingProgramId, 
                                         tp.Name AS TrainingProgramName
                                         FROM Employee e 
@@ -202,7 +203,7 @@ namespace BangazonWorkforce.Controllers
                             };
                         }
 
-                        if (!reader.IsDBNull(reader.GetOrdinal("ComputerEmployeeId")))
+                        if (!reader.IsDBNull(reader.GetOrdinal("ComputerEmployeeId")) && (reader.IsDBNull(reader.GetOrdinal("UnassignDate"))))
                         {
                             model.ComputerEmployee = new ComputerEmployee
                             {
