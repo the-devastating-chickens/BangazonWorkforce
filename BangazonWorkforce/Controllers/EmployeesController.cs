@@ -77,46 +77,22 @@ namespace BangazonWorkforce.Controllers
             return View(employee);
         }
 
-        ///////////////////////////created by alex -- for the GET i pass in a view model that contain a selectlistitem, i do this so i can create the drop down menu based on departments. i then do the post to insert into sql
-
         // GET: Employees/Create
         public ActionResult Create()
         {
-            EmployeeCreateNewViewModel viewModel = new EmployeeCreateNewViewModel();
-            viewModel.AvailableDepartments = GetDepartments();
-            return View(viewModel);
+            return View();
         }
 
         // POST: Employees/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(EmployeeCreateNewViewModel viewModel)
+        public ActionResult Create(IFormCollection collection)
         {
-            Employee employee = viewModel.Employee;
             try
             {
                 // TODO: Add insert logic here
-                using (SqlConnection conn = Connection)
-                {
-                    conn.Open();
-                    using (SqlCommand cmd = conn.CreateCommand())
-                    {
-                        cmd.CommandText = @"INSERT INTO Employee (FirstName,LastName, IsSuperVisor, DepartmentId) VALUES (@FirstName, @LastName, @IsSuperVisor, @DepartmentId)";                      
 
-                        cmd.Parameters.Add(new SqlParameter("@FirstName", employee.FirstName));
-                        cmd.Parameters.Add(new SqlParameter("@LastName", employee.LastName));
-                        cmd.Parameters.Add(new SqlParameter("@IsSuperVisor", employee.IsSuperVisor));
-                        cmd.Parameters.Add(new SqlParameter("@DepartmentId", employee.DepartmentId));
-
-                        cmd.ExecuteNonQuery();
-
-                        return RedirectToAction(nameof(Index));
-
-
-                    }
-                }
-
-
+                return RedirectToAction(nameof(Index));
             }
             catch
             {
@@ -170,62 +146,68 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
-<<<<<<< HEAD
-        private Employee GetEmployeeById(int id)
-=======
-        private List<Department> GetDepartments ()
->>>>>>> master
+        private EmployeeDetailsViewModel GetEmployeeById(int id)
         {
             using (SqlConnection conn = Connection)
             {
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-<<<<<<< HEAD
-                    cmd.CommandText = @"SELECT e.Id, e.FirstName, e.LastName, d.[Name]
+                    cmd.CommandText = @"SELECT e.Id AS EmployeeId, 
+                                        e.FirstName, 
+                                        e.LastName, 
+                                        d.[Name] AS DepartmentName, 
+                                        d.Id AS DepartmentId, 
+                                        c.Id AS ComputerId, 
+                                        c.Make, 
+                                        c.Manufacturer, 
+                                        ce.AssignDate, 
+                                        ce.UnassignDate, 
+                                        tp.Id AS TrainingProgramId, 
+                                        tp.Name AS TrainingProgramName, 
+                                        tp.StartDate, 
+                                        tp.EndDate, 
+                                        tp.MaxAttendees
                                         FROM Employee e 
-                                        JOIN Department d ON e.DepartmentId = d.Id
+                                        LEFT JOIN Department d ON e.DepartmentId = d.Id
+                                        LEFT JOIN ComputerEmployee ce ON ce.EmployeeId = e.id 
+                                        LEFT JOIN Computer c ON c.id = ce.ComputerId 
+                                        LEFT JOIN EmployeeTraining et ON et.EmployeeId = e.Id
+                                        LEFT JOIN TrainingProgram tp ON tp.Id = et.TrainingProgramId 
                                         WHERE e.Id = @id";
                     cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = cmd.ExecuteReader();
 
-                    Employee employee = null;
+                    EmployeeDetailsViewModel model = null;
 
                     if (reader.Read())
                     {
-                        employee = new Employee
+                        model.Employee = new Employee
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("Id")),
                             FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
                             LastName = reader.GetString(reader.GetOrdinal("LastName")),
                             Department = new Department
                             {
-                                Name = reader.GetString(reader.GetOrdinal("Name"))
+                                Name = reader.GetString(reader.GetOrdinal("DepartmentName"))
                             }
                         };
-                    }
-                    reader.Close();
-                    return employee;
-=======
-                    cmd.CommandText = @"Select Id, Name FROM Department";
 
-                    SqlDataReader reader = cmd.ExecuteReader();
-
-                    List<Department> departments = new List<Department>();
-
-                    while (reader.Read())
-                    {
-                        Department department = new Department()
+                        if ((reader.GetInt32(reader.GetOrdinal("ComputerId")) != 0))
                         {
-                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                            Name = reader.GetString(reader.GetOrdinal("Name"))
-                        };
-                        departments.Add(department);
+                            model.AssignedComputer = new Computer
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("ComputerId")),
+                                Make = reader.GetString(reader.GetOrdinal("Make")),
+                                Manufacturer = reader.GetString(reader.GetOrdinal("Manufacturer")),
+                                AssignDate = reader.GetDateTime(reader.GetOrdinal("AssignDate")),
+                                UnassignDate = reader.GetDateTime(reader.GetOrdinal("UnassignDate"))
+                            }
+                        }
 
                     }
                     reader.Close();
-                    return departments;
->>>>>>> master
+                    return model;
                 }
             }
         }
