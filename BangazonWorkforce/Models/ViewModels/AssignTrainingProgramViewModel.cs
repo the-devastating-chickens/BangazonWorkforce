@@ -1,4 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc.Rendering;
+﻿// Author Jonathan Schaffer 
+// the view model is used for handling trainging programs that an employee can be assigned to
+// Only will show programs that are active and have room for them
+
+
+
+
+using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;

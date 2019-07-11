@@ -4,13 +4,13 @@
     ViewData["Title"] = "TrainingProgramForm";
 }
 
-<h1>TrainingProgramForm</h1>
+<h1>Assign Training Program Form</h1>
 
-<h4>AssignTrainingProgramViewModel</h4>
+<h4>Assign Training Program ViewModel</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="TrainingProgramForm">
+        <form asp-action="AssignTrainingProgram">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="SelectedValue" class="control-label"></label>
@@ -18,7 +18,8 @@
                 <span asp-validation-for="SelectedValue" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input name="submitButton" type="submit" value="Save" asp-controller="Employees" asp-action="AssignExercise" class="btn btn-primary" />
+
             </div>
         </form>
     </div>
@@ -30,4 +31,5 @@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
 }

@@ -100,7 +100,7 @@ namespace BangazonWorkforce.Controllers
         }
 
         // GET: Employees/AssignTrainingProgram
-        [HttpGet("/Employees/TrainingProgram/{id?}"), ActionName("TrainingProgramForm")]
+        [HttpGet("/Employees/AssignTrainingProgram/{id?}"), ActionName("AssignTrainingProgramForm")]
         public ActionResult AssignTrainingProgramForm(int id)
         {
 
@@ -113,21 +113,28 @@ namespace BangazonWorkforce.Controllers
 
         public ActionResult AssignTrainingProgram([FromRoute]int id, [FromForm] int SelectedValue)
         {
-
-            using (SqlConnection conn = Connection)
+            if (SelectedValue != 0)
             {
-                conn.Open();
 
-                using (SqlCommand cmd = conn.CreateCommand())
+                using (SqlConnection conn = Connection)
                 {
-                    cmd.CommandText = "INSERT INTO EmployeeTraining (EmployeeId, TrainingProgramId) VALUES (@EmployeeId, @TrainingProgramId)";
-                    cmd.Parameters.Add(new SqlParameter("@EmployeeId", id));
-                    cmd.Parameters.Add(new SqlParameter("@TrainingProgramId", SelectedValue));
+                    conn.Open();
 
-                    cmd.ExecuteNonQuery();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = "INSERT INTO EmployeeTraining (EmployeeId, TrainingProgramId) VALUES (@EmployeeId, @TrainingProgramId)";
+                        cmd.Parameters.Add(new SqlParameter("@EmployeeId", id));
+                        cmd.Parameters.Add(new SqlParameter("@TrainingProgramId", SelectedValue));
 
-                    return RedirectToAction("Details", "Employees", new { id = id });
+                        cmd.ExecuteNonQuery();
+
+                        return RedirectToAction("Details", "Employees", new { id = id });
+                    }
                 }
+            }
+            else
+            {
+                return RedirectToAction("Details", "Employees", new { id = id });
             }
         }
 
