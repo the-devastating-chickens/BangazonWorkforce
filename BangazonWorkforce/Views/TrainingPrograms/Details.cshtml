@@ -53,6 +53,21 @@
     </dl>
 </div>
 <div>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    <a asp-action="Index">Back to List</a>
+    @if (Model.EndDate < DateTime.Now)
+    {
+        <div>
+            <a asp-action="ViewPastPrograms">Back to List of Past Training Programs</a>
+        </div>
+        <div>
+            <a asp-action="Index">Back to List of All Training Programs</a>
+        </div>
+    }
+
+    @if (Model.EndDate > DateTime.Now)
+    {
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id })
+        <a asp-action="Index">Back to List</a>
+    }
+
+
 </div>

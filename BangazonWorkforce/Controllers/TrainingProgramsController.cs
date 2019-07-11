@@ -68,12 +68,49 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
+        //GET: TrainingProgram (Past Training Programs)
+        public ActionResult ViewPastPrograms()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT t.Id,
+                                        t.Name,
+                                        t.StartDate,
+                                        t.EndDate,
+                                        t.MaxAttendees
+                                        FROM TrainingProgram t
+                                        WHERE t.EndDate < CURRENT_TIMESTAMP";
+                    SqlDataReader reader = cmd.ExecuteReader();
+                    List<TrainingProgram> trainingPrograms = new List<TrainingProgram>();
+
+                    while (reader.Read())
+                    {
+                        TrainingProgram trainingProgram = new TrainingProgram
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            Name = reader.GetString(reader.GetOrdinal("Name")),
+                            StartDate = reader.GetDateTime(reader.GetOrdinal("StartDate")),
+                            EndDate = reader.GetDateTime(reader.GetOrdinal("EndDate")),
+                            MaxAttendees = reader.GetInt32(reader.GetOrdinal("MaxAttendees"))
+                        };
+                        trainingPrograms.Add(trainingProgram);
+                    }
+                    reader.Close();
+                    return View(trainingPrograms);
+                }
+            }
+        }
+
         // GET: TrainingProgram/Details/5
         public ActionResult Details(int id)
         {
             TrainingProgram trainingProgram = GetTrainingProgramById(id);
             return View(trainingProgram);
         }
+
 
         // GET: TrainingProgram/Create
         public ActionResult Create()
