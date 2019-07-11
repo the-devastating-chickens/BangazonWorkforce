@@ -1,6 +1,6 @@
 ﻿/* Author: Billy Mathison
  * Purpose: Creating a controller for the TrainingProgram model. 
- * Methods: Index, Details, Create, Edit, Delete, and GetTrainingProgramById
+ * Methods: Index, Details, Create, Edit, Delete, DeleteConfirmed, and GetTrainingProgramById
  */
 
 using System;
@@ -126,7 +126,6 @@ namespace BangazonWorkforce.Controllers
             {
                 return StatusCode(403);
             }
-
         }
 
         // POST: TrainingProgram/Edit/5
@@ -168,17 +167,35 @@ namespace BangazonWorkforce.Controllers
         // GET: TrainingProgram/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            TrainingProgram trainingProgram = GetTrainingProgramById(id);
+            if (trainingProgram.StartDate > DateTime.Now)
+            {
+                return View(trainingProgram);
+            }
+            else
+            {
+                return StatusCode(403);
+            }
         }
 
         // POST: TrainingProgram/Delete/5
-        [HttpPost]
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult DeleteConfirmed(int id)
         {
             try
             {
-                // TODO: Add delete logic here
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = "DELETE TrainingProgram WHERE Id = @id";
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
 
                 return RedirectToAction(nameof(Index));
             }
