@@ -44,25 +44,25 @@ namespace BangazonWorkforce.Models.ViewModels
 
         }
 
-        public void AssignExercise()
-        {
-            using (SqlConnection conn = Connection)
-            {
-                conn.Open();
+        //public void AssignExercise()
+        //{
+        //    using (SqlConnection conn = Connection)
+        //    {
+        //        conn.Open();
 
-                using (SqlCommand cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = "INSERT INTO EmployeeTraining (EmployeeId, TrainingProgramId) VALUES (@EmployeeId, @TrainingProgramId)";
-                    cmd.Parameters.Add(new SqlParameter("@EmployeeId", Employee.Id));
-                    cmd.Parameters.Add(new SqlParameter("@TrainingProgramId", SelectedValue));
+        //        using (SqlCommand cmd = conn.CreateCommand())
+        //        {
+        //            cmd.CommandText = "INSERT INTO EmployeeTraining (EmployeeId, TrainingProgramId) VALUES (@EmployeeId, @TrainingProgramId)";
+        //            cmd.Parameters.Add(new SqlParameter("@EmployeeId", Employee.Id));
+        //            cmd.Parameters.Add(new SqlParameter("@TrainingProgramId", SelectedValue));
 
-                    cmd.ExecuteNonQuery();
+        //            cmd.ExecuteNonQuery();
 
 
 
-                }
-            }
-        }
+        //        }
+        //    }
+        //}
 
         private List<TrainingProgram> GetAvailableTrainingPrograms(int id)
         {
@@ -78,13 +78,13 @@ namespace BangazonWorkforce.Models.ViewModels
                                                 tp.EndDate,
                                                 tp.MaxAttendees
                                                 FROM TrainingProgram tp
-                                                JOIN EmployeeTraining et ON et.TrainingProgramId = tp.Id
+                                                LEFT JOIN EmployeeTraining et ON et.TrainingProgramId = tp.Id
                                                 WHERE tp.StartDate > GETDATE()
-                                                AND (et.EmployeeId != @id
-                                                AND tp.Id NOT IN 
-                                                (SELECT tp.Id FROM TrainingProgram tp
-                                                JOIN EmployeeTraining et ON et.TrainingProgramId = tp.Id
-                                                WHERE et.EmployeeId = @id));";
+                                                AND (et.EmployeeId != @id 
+                                                AND tp.Id NOT IN
+                                                (SELECT tp.Id From TrainingProgram tp
+                                                LEFT JOIN EmployeeTraining et ON et.TrainingProgramId = tp.Id WHERE et.EmployeeId = @id))
+                                                OR et.EmployeeId IS NULL";
 
                     cmd.Parameters.Add(new SqlParameter("@id", id));
 
@@ -92,22 +92,36 @@ namespace BangazonWorkforce.Models.ViewModels
                     List<TrainingProgram> trainingPrograms = new List<TrainingProgram>();
 
                     SqlDataReader reader = cmd.ExecuteReader();
+                    var dictionary = new Dictionary<int, TrainingProgram>();
 
                     while (reader.Read())
                     {
-                        if (!trainingPrograms.Any(t => t.Id == reader.GetInt32(reader.GetOrdinal("Id"))))
+                        if (!dictionary.ContainsKey(reader.GetInt32(reader.GetOrdinal("Id"))))
                         {
-                            TrainingProgram trainingProgram = new TrainingProgram
+
+
+                            if (!trainingPrograms.Any(t => t.Id == reader.GetInt32(reader.GetOrdinal("Id"))))
                             {
-                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                                Name = reader.GetString(reader.GetOrdinal("Name")),
-                                StartDate = reader.GetDateTime(reader.GetOrdinal("StartDate")),
-                                EndDate = reader.GetDateTime(reader.GetOrdinal("EndDate")),
-                                MaxAttendees = reader.GetInt32(reader.GetOrdinal("MaxAttendees"))
-                            };
+                                TrainingProgram trainingProgram = new TrainingProgram
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                    Name = reader.GetString(reader.GetOrdinal("Name")),
+                                    StartDate = reader.GetDateTime(reader.GetOrdinal("StartDate")),
+                                    EndDate = reader.GetDateTime(reader.GetOrdinal("EndDate")),
+                                    MaxAttendees = reader.GetInt32(reader.GetOrdinal("MaxAttendees"))
+                                };
 
-                            trainingPrograms.Add(trainingProgram);
+                                dictionary.Add(trainingProgram.Id, trainingProgram);
 
+                                trainingPrograms.Add(dictionary[reader.GetInt32(reader.GetOrdinal("Id"))]);
+
+                                //trainingPrograms.Add(trainingProgram);
+                                //if (trainingPrograms.Any(p => p.Id == reader.GetInt32(reader.GetOrdinal("TrainingProgramId"))))
+                                //{
+                                //    break;
+                                //}
+
+                            }
                         }
                     }
 
