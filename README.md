@@ -29,7 +29,7 @@ cd BangazonWorkForce/BangazonWorkForce
 start BangazonApi.csproj
 ```
 
-Now, you'll be taken to Visual Studio with the project opened up. The next thing you'll want to do it start the application and Run the program. On the upper middle part of the toolbar, you'll see a green arrow and `IIS Express`, click on the dropdown button and choose `BangazonAPI`. This will run the program and automatically open up a window to see our API. If for some chance you are not directed, simply go to your browser and enter in 
+Now, you'll be taken to Visual Studio with the project opened up. The next thing you'll want to do it start the application and Run the program. On the upper middle part of the toolbar, you'll see a green arrow and `IIS Express`, click on the dropdown button and choose `BangazonWorkForce`. This will run the program and automatically open up a window to see our API. If for some chance you are not directed, simply go to your browser and enter in 
 
 ```
 http://localhost:5000
