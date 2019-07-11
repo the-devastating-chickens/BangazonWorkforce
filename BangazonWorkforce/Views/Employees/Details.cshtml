@@ -48,6 +48,7 @@
         <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.TrainingPrograms)
         </dt>
+
         @foreach (var TrainingProgram in Model.TrainingPrograms)
         {
             <dd class="col-sm-10">
@@ -58,6 +59,7 @@
         }
 
     </dl>
+        @Html.ActionLink("Assign New Training Program", "AssignTrainingProgramForm", new { id = Model.Employee.Id })
 </div>
 <div>
     @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |

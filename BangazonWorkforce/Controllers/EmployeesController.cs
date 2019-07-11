@@ -99,6 +99,45 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
+        // GET: Employees/AssignTrainingProgram
+        [HttpGet("/Employees/AssignTrainingProgram/{id?}"), ActionName("AssignTrainingProgramForm")]
+        public ActionResult AssignTrainingProgramForm(int id)
+        {
+
+            AssignTrainingProgramViewModel viewModel = new AssignTrainingProgramViewModel(id, _config.GetConnectionString("DefaultConnection"));
+
+            viewModel.Employee = GetEmployeeByIdFrom(id);
+
+            return View(viewModel);
+        }
+
+        public ActionResult AssignTrainingProgram([FromRoute]int id, [FromForm] int SelectedValue)
+        {
+            if (SelectedValue != 0)
+            {
+
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = "INSERT INTO EmployeeTraining (EmployeeId, TrainingProgramId) VALUES (@EmployeeId, @TrainingProgramId)";
+                        cmd.Parameters.Add(new SqlParameter("@EmployeeId", id));
+                        cmd.Parameters.Add(new SqlParameter("@TrainingProgramId", SelectedValue));
+
+                        cmd.ExecuteNonQuery();
+
+                        return RedirectToAction("Details", "Employees", new { id = id });
+                    }
+                }
+            }
+            else
+            {
+                return RedirectToAction("Details", "Employees", new { id = id });
+            }
+        }
+
         // GET: Employees/Edit/5
         public ActionResult Edit(int id)
         {
@@ -231,6 +270,42 @@ namespace BangazonWorkforce.Controllers
                     }
                     reader.Close();
                     return model;
+                }
+            }
+        }
+        private Employee GetEmployeeByIdFrom(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT
+                                            Id,
+                                            FirstName,
+                                            LastName
+                                        FROM Employee
+                                        WHERE Id = @id";
+
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                    Employee employee = null;
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    if (reader.Read())
+                    {
+                        employee = new Employee
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                            LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                        };
+                    }
+
+                    reader.Close();
+                    return employee;
                 }
             }
         }
