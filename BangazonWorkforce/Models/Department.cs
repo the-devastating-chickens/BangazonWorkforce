@@ -13,10 +13,12 @@ namespace BangazonWorkforce.Models
         [Required]
         public string Name { get; set; }
 
-        [Required]
+        [Required(ErrorMessage = "You must provide a budget for this department.")]
+        [Range(0, int.MaxValue, ErrorMessage = "A budget cannot be less than zero or Higher then 2 Billion")]
         public int Budget { get; set; }
         [Display(Name = "Number of Employees")]
         public int NumberOfEmployees { get; set;  }
-        public List<Employee> DepartmentEmployees { get; set; } = new List<Employee>();
+        [Display(Name = "Employees:")]
+        public List<Employee> DepartmentEmployees { get; set; }
     }
 }

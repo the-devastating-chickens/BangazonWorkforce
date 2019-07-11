@@ -232,7 +232,7 @@ namespace BangazonWorkforce.Controllers
                             };
                         }
 
-                        if (!reader.IsDBNull(reader.GetOrdinal("ComputerId")))
+                        if (!reader.IsDBNull(reader.GetOrdinal("ComputerId")) && (reader.IsDBNull(reader.GetOrdinal("UnassignDate"))))
                         {
                             model.AssignedComputer = new Computer
                             {
@@ -252,13 +252,20 @@ namespace BangazonWorkforce.Controllers
 
                         if (!reader.IsDBNull(reader.GetOrdinal("TrainingProgramId")))
                         {
-                            TrainingProgram trainingProgram = new TrainingProgram
+                            if (model.TrainingPrograms.Any(p => p.Id == reader.GetInt32(reader.GetOrdinal("TrainingProgramId"))))
                             {
-                                Id = reader.GetInt32(reader.GetOrdinal("TrainingProgramId")),
-                                Name = reader.GetString(reader.GetOrdinal("TrainingProgramName"))
-                            };
+                                break;
+                            }
+                            else
+                            {
+                                TrainingProgram trainingProgram = new TrainingProgram
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("TrainingProgramId")),
+                                    Name = reader.GetString(reader.GetOrdinal("TrainingProgramName"))
+                                };
 
-                            model.TrainingPrograms.Add(trainingProgram);
+                                model.TrainingPrograms.Add(trainingProgram);
+                            }
                         }
                     }
                     reader.Close();
