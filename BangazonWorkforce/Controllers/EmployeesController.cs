@@ -76,22 +76,42 @@ namespace BangazonWorkforce.Controllers
             return View(employee);
         }
 
+        ///////////////////////////created by alex -- for the GET i pass in a view model that contain a selectlistitem, i do this so i can create the drop down menu based on departments. i then do the post to insert into sql
+
         // GET: Employees/Create
         public ActionResult Create()
         {
-            return View();
+            EmployeeCreateNewViewModel viewModel = new EmployeeCreateNewViewModel();
+            viewModel.AvailableDepartments = GetDepartments();
+            return View(viewModel);
         }
 
         // POST: Employees/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(EmployeeCreateNewViewModel viewModel)
         {
+            Employee employee = viewModel.Employee;
             try
             {
                 // TODO: Add insert logic here
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"INSERT INTO Employee (FirstName,LastName, IsSuperVisor, DepartmentId) VALUES (@FirstName, @LastName, @IsSuperVisor, @DepartmentId)";
 
-                return RedirectToAction(nameof(Index));
+                        cmd.Parameters.Add(new SqlParameter("@FirstName", employee.FirstName));
+                        cmd.Parameters.Add(new SqlParameter("@LastName", employee.LastName));
+                        cmd.Parameters.Add(new SqlParameter("@IsSuperVisor", employee.IsSuperVisor));
+                        cmd.Parameters.Add(new SqlParameter("@DepartmentId", employee.DepartmentId));
+
+                        cmd.ExecuteNonQuery();
+
+                        return RedirectToAction(nameof(Index));
+                    }
+                }
             }
             catch
             {
@@ -148,9 +168,9 @@ namespace BangazonWorkforce.Controllers
             viewModel.AvailableDepartments = GetDepartments();
 
 
-            if(GetCurrentComputer(id) != null)
+            if (GetCurrentComputer(id) != null)
             {
-            viewModel.CurrentComputerId = GetCurrentComputer(id).Id;
+                viewModel.CurrentComputerId = GetCurrentComputer(id).Id;
 
             }
 
@@ -189,21 +209,21 @@ namespace BangazonWorkforce.Controllers
                         cmd.ExecuteNonQuery();
                         cmd.Parameters.Clear();
 
-                        if(viewModel.Computer != null)
+                        if (viewModel.Computer != null)
                         {
-                        cmd.CommandText = @"UPDATE ComputerEmployee SET 
+                            cmd.CommandText = @"UPDATE ComputerEmployee SET 
                                                 EmployeeId = @EmployeeId, 
                                                 ComputerId = @ComputerId,
                                                 UnassignDate = @UnassignDate
                                                 WHERE EmployeeId = @id";
 
-                        cmd.Parameters.Add(new SqlParameter("@EmployeeId", id));
-                        cmd.Parameters.Add(new SqlParameter("@ComputerId", viewModel.Computer.Id));
-                        cmd.Parameters.Add(new SqlParameter("@UnassignDate", DateTime.Now.ToString()));
-                        cmd.Parameters.Add(new SqlParameter("@id", id));
+                            cmd.Parameters.Add(new SqlParameter("@EmployeeId", id));
+                            cmd.Parameters.Add(new SqlParameter("@ComputerId", viewModel.Computer.Id));
+                            cmd.Parameters.Add(new SqlParameter("@UnassignDate", DateTime.Now.ToString()));
+                            cmd.Parameters.Add(new SqlParameter("@id", id));
 
-                        cmd.ExecuteNonQuery();
-                        cmd.Parameters.Clear();
+                            cmd.ExecuteNonQuery();
+                            cmd.Parameters.Clear();
 
                         }
 
@@ -211,17 +231,17 @@ namespace BangazonWorkforce.Controllers
                         {
                             cmd.CommandText = "INSERT INTO ComputerEmployee (EmployeeId, ComputerId, AssignDate) VALUES (@EmployeeId, @ComputerId, @AssignDate)";
 
-                        cmd.Parameters.Add(new SqlParameter("@EmployeeId", id));
-                        cmd.Parameters.Add(new SqlParameter("@ComputerId", viewModel.CurrentComputerId));
-                        cmd.Parameters.Add(new SqlParameter("@AssignDate", DateTime.Now.ToString()));
+                            cmd.Parameters.Add(new SqlParameter("@EmployeeId", id));
+                            cmd.Parameters.Add(new SqlParameter("@ComputerId", viewModel.CurrentComputerId));
+                            cmd.Parameters.Add(new SqlParameter("@AssignDate", DateTime.Now.ToString()));
 
-                        cmd.ExecuteNonQuery();
+                            cmd.ExecuteNonQuery();
 
                         }
 
 
                     }
-                        return RedirectToAction(nameof(Index));
+                    return RedirectToAction(nameof(Index));
                 }
             }
             catch
@@ -255,7 +275,7 @@ namespace BangazonWorkforce.Controllers
 
         ////////////////private methods created by Alex Thacker -- purpose is to gain data base on Employee Id being plugged in. getting departments to populate a drop down inside edit form 
 
-        private List<Department> GetDepartments ()
+        private List<Department> GetDepartments()
         {
             using (SqlConnection conn = Connection)
             {
@@ -409,14 +429,14 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
-        private List<Computer> GetComputers (int id)
+        private List<Computer> GetComputers(int id)
         {
             using (SqlConnection conn = Connection)
             {
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                 
+
 
                     cmd.CommandText = @"select c.Id, 
                                         c.Make from Computer c
@@ -453,7 +473,7 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
-        private Computer GetCurrentComputer (int id)
+        private Computer GetCurrentComputer(int id)
         {
             using (SqlConnection conn = Connection)
             {
@@ -482,19 +502,19 @@ namespace BangazonWorkforce.Controllers
                             Make = reader.GetString(reader.GetOrdinal("Make"))
 
                         };
-                        
+
                     }
 
                     reader.Close();
 
-                   
+
                     return computer;
 
                 }
             }
         }
 
-        private Employee GetEmployee (int id)
+        private Employee GetEmployee(int id)
         {
             using (SqlConnection conn = Connection)
             {
