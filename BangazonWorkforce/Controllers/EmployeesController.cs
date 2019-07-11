@@ -129,11 +129,11 @@ namespace BangazonWorkforce.Controllers
         {
             EmployeeEditViewModel viewModel = new EmployeeEditViewModel();
 
-            viewModel.AvailableComputers = GetComputers();
             viewModel.AvailableDepartments = GetDepartments();
             //viewModel.CurrentComputerId = GetComputerId(id);
-            viewModel.Computer = GetCurrentComputer(id);
             viewModel.Employee = GetEmployee(id);
+            viewModel.AvailableComputers = GetComputers();
+            viewModel.Computer = GetCurrentComputer(id);
 
             return View(viewModel);
         }

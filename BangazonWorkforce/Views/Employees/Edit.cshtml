@@ -25,7 +25,14 @@
             </div>
             <div>
                 <label class="control-label">Current Computer</label>
-                <h1 asp-for="Computer.Make">@Model.Computer.Make</h1>
+                @if (@Model.Computer != null)
+                {
+                    <h1 asp-for="Computer.Make">@Model.Computer.Make</h1>
+                }
+                @if (@Model.Computer == null)
+                {
+                    <h1 asp-for="Computer.Make">NO COMPUTER ASSIGNED YET</h1>
+                }
             </div>
             <div class="form-group">
                 <label class="control-label">Assign New Computer</label>
