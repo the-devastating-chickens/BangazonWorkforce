@@ -11,7 +11,7 @@ These instructions will get you a copy of the project up and running on your loc
 First, you'll need to clone down the repo into a directory. Open your terminal and enter
 
 ```
-git clone git@github.com:grumpy-rainbows/BangazonAPI.git
+git clone git@github.com:the-devatstating-chickens/BangazonWorkForce.git
 ```
 
 You'll need to create a database and also, add data. We used Azure, we recommend using either Azure or SSMS and to run the script to create the database [Official Banagazon SQL](./bangazon.sql).
@@ -22,7 +22,7 @@ The next thing to do is add data to each of the tables. We've provided you with 
 After that, open up your editor which we prefer to be Visual Studio, through the terminal with the command
 
 ```
-cd BangazonAPI/BangazonAPI
+cd BangazonWorkForce/BangazonWorkForce
 ```
 
 ```
@@ -35,12 +35,11 @@ Now, you'll be taken to Visual Studio with the project opened up. The next thing
 http://localhost:5000
 ```
 
-###### You are now ready to use our BangazonAPI. 
+###### You are now ready to use our BangazonWorkForce. 
 
 
 ## User instructions
-* You are able to few several resources: `Products`, `Orders`, `PaymentTypes`, `Computers` and `ProductTypes`.
-* Open Postman and make a call to GET, POST, PUT and DELETE operations on all of the resources. 
+* You are able to few several resources: `Training Programs`, `Employees`, `Departments`, and `Computers`
 
 ### We hope you enjoyed our app! :)
 
@@ -51,7 +50,7 @@ http://localhost:5000
 * [ADO.NET](https://docs.microsoft.com/en-us/dotnet/framework/data/adonet/ado-net-overview) - SQL access
 * [Azure](https://gruntjs.com/) - Cloud for database
 * [ASP.NET](https://dotnet.microsoft.com/apps/aspnet) - Framework for Web app 
-* [Postman](https://www.getpostman.com/) - Testing fetch calls
+
 
 
 
