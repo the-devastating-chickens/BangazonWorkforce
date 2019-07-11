@@ -1,6 +1,6 @@
 ﻿/* Author: Billy Mathison
  * Purpose: Creating a controller for the TrainingProgram model. 
- * Methods: Index, Details, Create, Edit, and Delete
+ * Methods: Index, Details, Create, Edit, Delete, and GetTrainingProgramById
  */
 
 using System;
@@ -132,11 +132,30 @@ namespace BangazonWorkforce.Controllers
         // POST: TrainingProgram/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, TrainingProgram trainingProgram)
         {
             try
             {
-                // TODO: Add update logic here
+                using (SqlConnection conn = Connection)
+                {
+                    conn.Open();
+                    using (SqlCommand cmd = conn.CreateCommand())
+                    {
+                        cmd.CommandText = @"UPDATE TrainingProgram
+                                            SET Name = @name,
+                                            StartDate = @startDate,
+                                            EndDate = @endDate,
+                                            MaxAttendees = @maxAttendees
+                                            WHERE Id = @id";
+                        cmd.Parameters.Add(new SqlParameter("@name", trainingProgram.Name));
+                        cmd.Parameters.Add(new SqlParameter("@startDate", trainingProgram.StartDate));
+                        cmd.Parameters.Add(new SqlParameter("@endDate", trainingProgram.EndDate));
+                        cmd.Parameters.Add(new SqlParameter("@maxAttendees", trainingProgram.MaxAttendees));
+                        cmd.Parameters.Add(new SqlParameter("@id", id));
+
+                        cmd.ExecuteNonQuery();
+                    }
+                }
 
                 return RedirectToAction(nameof(Index));
             }
