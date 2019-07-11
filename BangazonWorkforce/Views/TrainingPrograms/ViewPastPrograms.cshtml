@@ -1,19 +1,16 @@
 ﻿@* Author: Billy Mathison
-    * Purpose: Creating an index template for a training program including link to create mew training program, list of future training progrms, and link to view past training programs.
+    * Purpose: Creating a ViewPastPrograms template for a training program including link to create mew training program, list of future training progrms, and link to view past training programs.
     * Methods: None
 *@
 
 @model IEnumerable<BangazonWorkforce.Models.TrainingProgram>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "ViewPastPrograms";
 }
 
-<h1>Index</h1>
+<h1>Past Training Programs</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
 <table class="table">
     <thead>
         <tr>
@@ -49,14 +46,12 @@
                     @Html.DisplayFor(modelItem => item.MaxAttendees)
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                    @Html.ActionLink("Details", "Details", new { id = item.Id })
                 </td>
             </tr>
         }
     </tbody>
 </table>
-<p>
-    <a asp-action="ViewPastPrograms">View Past Training Programs</a>
-</p>
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
