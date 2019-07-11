@@ -23,17 +23,6 @@
                 <select asp-for="Employee.DepartmentId" asp-items="@Model.AvailableDepartmentsSelectList"></select>
                 <span asp-validation-for="Employee.DepartmentId" class="text-danger"></span>
             </div>
-            <div>
-                <label class="control-label">Current Computer</label>
-                @if (@Model.Computer != null)
-                {
-                    <h1 asp-for="Computer.Make">@Model.Computer.Make</h1>
-                }
-                @if (@Model.Computer == null)
-                {
-                    <h1 asp-for="Computer.Make">NO COMPUTER ASSIGNED YET</h1>
-                }
-            </div>
             <div class="form-group">
                 <label class="control-label">Assign New Computer</label>
                 <select asp-for="CurrentComputerId" asp-items="@Model.AvailableComputersSelectList"></select>

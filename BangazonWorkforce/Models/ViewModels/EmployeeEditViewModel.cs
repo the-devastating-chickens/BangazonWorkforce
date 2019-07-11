@@ -25,7 +25,7 @@ namespace BangazonWorkforce.Models.ViewModels
                 
             }
         }
-        public int CurrentComputerId { get; set;  }
+        public int? CurrentComputerId { get; set;  }
         public List<Computer> AvailableComputers { get; set; }
         public List<SelectListItem> AvailableComputersSelectList
         {
@@ -37,7 +37,7 @@ namespace BangazonWorkforce.Models.ViewModels
                 }
 
                 var variable = AvailableComputers.Select(a => new SelectListItem(a.Make, a.Id.ToString())).ToList();
-                variable.Insert(0, new SelectListItem("Select", null));
+                variable.Insert(0, new SelectListItem("Unassign", null));
                 return variable;
             }
         }

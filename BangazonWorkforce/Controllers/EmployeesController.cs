@@ -130,9 +130,16 @@ namespace BangazonWorkforce.Controllers
             EmployeeEditViewModel viewModel = new EmployeeEditViewModel();
 
             viewModel.AvailableDepartments = GetDepartments();
-            //viewModel.CurrentComputerId = GetComputerId(id);
+
+
+            if(GetCurrentComputer(id) != null)
+            {
+            viewModel.CurrentComputerId = GetCurrentComputer(id).Id;
+
+            }
+
             viewModel.Employee = GetEmployee(id);
-            viewModel.AvailableComputers = GetComputers();
+            viewModel.AvailableComputers = GetComputers(id);
             viewModel.Computer = GetCurrentComputer(id);
 
             return View(viewModel);
@@ -164,7 +171,8 @@ namespace BangazonWorkforce.Controllers
                         cmd.ExecuteNonQuery();
                         cmd.Parameters.Clear();
 
-                        
+                        if(viewModel.Computer != null)
+                        {
                         cmd.CommandText = @"UPDATE ComputerEmployee SET 
                                                 EmployeeId = @EmployeeId, 
                                                 ComputerId = @ComputerId,
@@ -179,14 +187,20 @@ namespace BangazonWorkforce.Controllers
                         cmd.ExecuteNonQuery();
                         cmd.Parameters.Clear();
 
-                        
-                        cmd.CommandText = "INSERT INTO ComputerEmployee (EmployeeId, ComputerId, AssignDate) VALUES (@EmployeeId, @ComputerId, @AssignDate)";
+                        }
+
+                        if (viewModel.CurrentComputerId != null)
+                        {
+                            cmd.CommandText = "INSERT INTO ComputerEmployee (EmployeeId, ComputerId, AssignDate) VALUES (@EmployeeId, @ComputerId, @AssignDate)";
 
                         cmd.Parameters.Add(new SqlParameter("@EmployeeId", id));
                         cmd.Parameters.Add(new SqlParameter("@ComputerId", viewModel.CurrentComputerId));
                         cmd.Parameters.Add(new SqlParameter("@AssignDate", DateTime.Now.ToString()));
 
                         cmd.ExecuteNonQuery();
+
+                        }
+
 
                     }
                         return RedirectToAction(nameof(Index));
@@ -250,38 +264,23 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
-        private List<Computer> GetComputers ()
+        private List<Computer> GetComputers (int id)
         {
             using (SqlConnection conn = Connection)
             {
                 conn.Open();
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
-                    //cmd.CommandText = @"Select Id, Make FROM Computer";
-
-                    //SqlDataReader reader = cmd.ExecuteReader();
-
-                    //List<Computer> computers = new List<Computer>();
-
-                    //while (reader.Read())
-                    //{
-                    //    Computer computer = new Computer()
-                    //    {
-                    //        Id = reader.GetInt32(reader.GetOrdinal("Id")),
-                    //        Make = reader.GetString(reader.GetOrdinal("Make"))
-                    //    };
-                    //    computers.Add(computer);
-
-                    //}
-                    //reader.Close();
-                    //return computers;
+                 
 
                     cmd.CommandText = @"select c.Id, 
-                                        c.Make, 
-                                        c.Manufacturer from Computer c
+                                        c.Make from Computer c
                                         left JOIN ComputerEmployee ce on ce.ComputerId = c.Id
-                                        where ce.ComputerId is null or ce.UnassignDate is not null and c.DecomissionDate is null";
+                                        where ce.ComputerId is null and c.DecomissionDate 
+                                        is null or (ce.ComputerId not in (SELECT ComputerId from ComputerEmployee where UnassignDate is null) and c.DecomissionDate is null) 
+                                        or (ce.EmployeeId = @id and ce.UnassignDate is null)";
 
+                    cmd.Parameters.Add(new SqlParameter("@id", id));
                     SqlDataReader reader = cmd.ExecuteReader();
 
                     List<Computer> computers = new List<Computer>();
