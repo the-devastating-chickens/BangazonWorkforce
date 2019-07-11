@@ -124,6 +124,8 @@ namespace BangazonWorkforce.Controllers
             }
         }
 
+        //////////////////////////////edit section done by Alex Thacker -- inside the GET, create an instance of viewModel, insert departments on line 134, check if employee has a current computer assigned, set value if computer is assigned, get the current employee, get all computers that can be assigned, and get Id of current computer. all private methods are defined at the bottom of the page. 
+
         // GET: Employees/Edit/5
         public ActionResult Edit(int id)
         {
@@ -144,6 +146,8 @@ namespace BangazonWorkforce.Controllers
 
             return View(viewModel);
         }
+
+        //////////////////////////Update employee based on information filled out, update joinTable to unassign a computer if user wants to, then create new instance of jointable to show that a new computer was assigned
 
         //POST: Employees/Edit/5
         [HttpPost]
@@ -234,6 +238,8 @@ namespace BangazonWorkforce.Controllers
                 return View();
             }
         }
+
+        ////////////////private methods created by Alex Thacker -- purpose is to gain data base on Employee Id being plugged in. getting departments to populate a drop down inside edit form 
 
         private List<Department> GetDepartments ()
         {
